@@ -11,9 +11,6 @@ using namespace std;
 
 int main() {
     
-    // set width to desired length of digits, to avoid coercion to hex if leading zeros.
-    cin >> setw(9);
-    
     // get the input
     int initialNum;
     cout << "Enter the first 9 digits of an ISBN as integer: ";
@@ -22,46 +19,19 @@ int main() {
     // calculate number of digits in input
     int len = static_cast<int>(to_string(initialNum).length());
     
-    // default parameters for calculating checksum (assume 9 digits)
     int checksumOperand = 1;
     int divModOperand = 100000000;
     
-    // alter parameters of calculations based on number of digits in initialNum
+    string zeros;
+    
+    // account for leading zeros in initialNum
     if (len < 9) {
-        switch(len) {
-            case 8:
-                checksumOperand = 2;
-                divModOperand = 10000000;
-                break;
-            case 7:
-                checksumOperand = 3;
-                divModOperand = 1000000;
-                break;
-            case 6:
-                checksumOperand = 4;
-                divModOperand = 100000;
-                break;
-            case 5:
-                checksumOperand = 5;
-                divModOperand = 10000;
-                break;
-            case 4:
-                checksumOperand = 6;
-                divModOperand = 1000;
-                break;
-            case 3:
-                checksumOperand = 7;
-                divModOperand = 100;
-                break;
-            case 2:
-                checksumOperand = 8;
-                divModOperand = 10;
-                break;
-            case 1:
-                checksumOperand = 9;
-                divModOperand = 1;
-                break;
+        int numZeros = 9 - len;
+        for (int i=0; i < numZeros; i++) {
+            zeros += '0';
         }
+        checksumOperand += numZeros;
+        divModOperand /= (numZeros * 10);
     }
     
     int runningNum = initialNum;
@@ -86,13 +56,6 @@ int main() {
     }
     
     checksum %= 11;
-    
-    // account for leading zeros in initialNum
-    int numZeros = 9 - len;
-    string zeros;
-    for (int i=0; i < numZeros; i++) {
-        zeros += '0';
-    }
     
     if (checksum == 10) {
         cout << "The ISBN-10 number is " << zeros << initialNum << "X" << endl;
